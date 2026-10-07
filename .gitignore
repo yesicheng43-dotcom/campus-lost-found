@@ -1,0 +1,31 @@
+# Python 缓存
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Python 虚拟环境
+.venv/
+venv/
+env/
+ENV/
+
+# 环境变量和本地配置
+.env
+.flaskenv
+
+# 测试和工具缓存
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# 编辑器配置
+.vscode/
+.idea/
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# Flask 本地实例数据
+instance/
