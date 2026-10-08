@@ -3,6 +3,7 @@ from pathlib import Path
 
 import click
 from flask import current_app, g
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from .validation import STATUS_OPTIONS
 
@@ -26,6 +27,19 @@ def init_db():
     database = get_db()
     schema_path = Path(current_app.root_path).joinpath("schema.sql")
     database.executescript(schema_path.read_text(encoding="utf-8"))
+    database.execute(
+        """
+        INSERT INTO users (username, password_hash, display_name, student_id, avatar)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            "demo-user",
+            generate_password_hash("123456"),
+            "叶思铖",
+            "102402142",
+            "/static/assets/avatar.png",
+        ),
+    )
     database.executemany(
         """
         INSERT INTO items
@@ -41,7 +55,7 @@ def init_db():
                 "东区教学楼 306",
                 "2026-09-22",
                 "蓝色校园卡，卡套上有白色挂绳。",
-                "",
+                "/static/assets/item-campus-card.png",
                 "campus-card@example.com",
                 "寻找中",
                 "demo-user",
@@ -53,7 +67,7 @@ def init_db():
                 "西区教学楼 201",
                 "2026-09-21",
                 "在教室后排捡到一把黑色长柄雨伞。",
-                "",
+                "/static/assets/item-umbrella.png",
                 "umbrella@example.com",
                 "待认领",
                 "demo-user",
@@ -65,7 +79,7 @@ def init_db():
                 "东区体育馆",
                 "2026-09-20",
                 "橙色篮球，表面有一处明显的黑色记号。",
-                "",
+                "/static/assets/item-basketball.png",
                 "basketball@example.com",
                 "寻找中",
                 "demo-user",
@@ -88,8 +102,20 @@ def init_app(app):
 
     with app.app_context():
         database = Path(app.config["DATABASE"])
-        if not database.exists():
+        if not database.exists() or not _has_table("users"):
             init_db()
+
+
+def _has_table(table_name):
+    return (
+        get_db()
+        .execute(
+            "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
+            (table_name,),
+        )
+        .fetchone()
+        is not None
+    )
 
 
 def search_items(keyword="", item_type="all", status="all"):
@@ -164,3 +190,38 @@ def update_item_status(item_id, status, owner):
     database.execute("UPDATE items SET status = ? WHERE id = ?", (status, item_id))
     database.commit()
     return True
+
+
+def get_user(username):
+    return get_db().execute(
+        "SELECT * FROM users WHERE username = ?", (username,)
+    ).fetchone()
+
+
+def authenticate_user(username, password):
+    user = get_user(username)
+    if user is None or not check_password_hash(user["password_hash"], password):
+        return None
+    return user
+
+
+def create_user(username, password, display_name, student_id):
+    database = get_db()
+    try:
+        cursor = database.execute(
+            """
+            INSERT INTO users (username, password_hash, display_name, student_id, avatar)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                username,
+                generate_password_hash(password),
+                display_name,
+                student_id,
+                "/static/assets/avatar.png",
+            ),
+        )
+        database.commit()
+    except sqlite3.IntegrityError:
+        return None
+    return cursor.lastrowid

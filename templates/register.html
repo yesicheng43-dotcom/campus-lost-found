@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}注册 · 校园失物招领{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <p class="eyebrow">加入校园失物招领</p>
+  <h1>创建账号</h1>
+  <p class="muted">注册后可以发布和管理自己的失物招领信息。</p>
+  <form class="form-card form-card--auth" method="post">
+    <label class="form-field" for="username"><span>账号</span><input id="username" name="username" value="{{ data.username }}" required></label>
+    <label class="form-field" for="password"><span>密码</span><input id="password" name="password" type="password" minlength="6" required></label>
+    <label class="form-field" for="display_name"><span>姓名</span><input id="display_name" name="display_name" value="{{ data.display_name }}" required></label>
+    <label class="form-field" for="student_id"><span>学号</span><input id="student_id" name="student_id" value="{{ data.student_id }}" required></label>
+    <button class="primary-button" type="submit">注册并登录</button>
+  </form>
+  <p class="auth-tip">已有账号？<a href="{{ url_for('main.login') }}">返回登录</a></p>
+</section>
+{% endblock %}

@@ -7,6 +7,7 @@
   <p class="muted">{{ '寻物' if item.type == 'lost' else '招领' }} · {{ item.status }}</p>
 </section>
 <article class="detail-card">
+  {% if item.image %}<img class="detail-card__image" src="{{ item.image }}" alt="{{ item.name }}图片">{% endif %}
   <dl class="detail-list">
     <div><dt>物品类别</dt><dd>{{ item.category }}</dd></div>
     <div><dt>地点</dt><dd>{{ item.location }}</dd></div>

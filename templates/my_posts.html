@@ -4,14 +4,15 @@
 <section class="hero hero--compact">
   <p class="eyebrow">我的发布</p>
   <h1>管理我发布的信息</h1>
-  <p class="muted">发布后可以在这里查看详情和更新状态。</p>
+  <p class="muted">{{ user.display_name }} · {{ user.student_id }}<br>发布后可以在这里查看详情和更新状态。</p>
 </section>
 {% if items %}
   <section class="item-list" aria-label="我的发布列表">
     {% for item in items %}
       <article class="item-card">
         <a class="item-card__link" href="{{ url_for('main.item_detail', item_id=item.id) }}">
-          <div class="item-card__top"><h2>{{ item.name }}</h2><span class="status">{{ item.status }}</span></div>
+          {% if item.image %}<img class="item-card__image" src="{{ item.image }}" alt="{{ item.name }}图片">{% endif %}
+          <div class="item-card__topline"><h2>{{ item.name }}</h2><span class="status">{{ item.status }}</span></div>
           <p>{{ '寻物' if item.type == 'lost' else '招领' }} · {{ item.location }} · {{ item.event_time }}</p>
         </a>
         <form class="status-form" method="post" action="{{ url_for('main.change_item_status', item_id=item.id) }}">

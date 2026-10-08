@@ -2,6 +2,14 @@ from app import create_app
 import pytest
 
 
+def login(client):
+    return client.post(
+        "/login",
+        data={"username": "demo-user", "password": "123456"},
+        follow_redirects=True,
+    )
+
+
 @pytest.fixture
 def app(tmp_path):
     return create_app(
@@ -44,6 +52,7 @@ def test_keyword_search_filters_items(app):
 
 def test_publish_lost_item_and_redirect_to_detail(app):
     client = app.test_client()
+    login(client)
 
     response = client.post(
         "/publish/lost",
@@ -65,6 +74,7 @@ def test_publish_lost_item_and_redirect_to_detail(app):
 
 def test_publish_requires_required_fields(app):
     client = app.test_client()
+    login(client)
 
     response = client.post("/publish/found", data={})
 
@@ -84,6 +94,7 @@ def test_detail_page_shows_seed_item(app):
 
 def test_owner_can_update_item_status(app):
     client = app.test_client()
+    login(client)
 
     response = client.post(
         "/items/1/status",
@@ -102,3 +113,54 @@ def test_missing_item_has_friendly_not_found_page(app):
 
     assert response.status_code == 404
     assert "找不到这条信息" in response.get_data(as_text=True)
+
+
+def test_protected_pages_require_login(app):
+    client = app.test_client()
+
+    response = client.get("/mine")
+
+    assert response.status_code == 302
+    assert "/login" in response.headers["Location"]
+
+
+def test_demo_user_can_login_and_view_personal_page(app):
+    client = app.test_client()
+
+    login(client)
+    response = client.get("/mine")
+
+    assert response.status_code == 200
+    assert "叶思铖" in response.get_data(as_text=True)
+    assert "102402142" in response.get_data(as_text=True)
+
+
+def test_invalid_login_shows_error(app):
+    client = app.test_client()
+
+    response = client.post(
+        "/login",
+        data={"username": "demo-user", "password": "wrong-password"},
+    )
+
+    assert response.status_code == 200
+    assert "账号或密码不正确" in response.get_data(as_text=True)
+
+
+def test_register_creates_account_and_logs_in(app):
+    client = app.test_client()
+
+    response = client.post(
+        "/register",
+        data={
+            "username": "new-user",
+            "password": "abcdef",
+            "display_name": "新同学",
+            "student_id": "20260001",
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert "新同学" in response.get_data(as_text=True)
+    assert "20260001" in response.get_data(as_text=True)

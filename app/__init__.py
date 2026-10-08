@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from flask import Flask
+from flask import Flask, session
 
 
 def create_app(test_config=None):
@@ -32,6 +32,12 @@ def create_app(test_config=None):
     from . import views
 
     app.register_blueprint(views.bp)
+
+    @app.context_processor
+    def inject_current_user():
+        username = session.get("username")
+        user = db.get_user(username) if username else None
+        return {"current_user": user}
 
     @app.errorhandler(404)
     def not_found(_error):
