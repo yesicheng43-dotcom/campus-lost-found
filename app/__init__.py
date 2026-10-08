@@ -32,4 +32,11 @@ def create_app(test_config=None):
     from . import views
 
     app.register_blueprint(views.bp)
+
+    @app.errorhandler(404)
+    def not_found(_error):
+        from flask import render_template
+
+        return render_template("404.html"), 404
+
     return app

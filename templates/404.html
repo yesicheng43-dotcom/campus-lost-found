@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}页面不存在 · 校园失物招领{% endblock %}
+{% block content %}
+<section class="empty-state">
+  <span class="empty-state__icon" aria-hidden="true">⌕</span>
+  <h2>找不到这条信息</h2>
+  <p>页面可能已被删除，或者链接地址不正确。</p>
+  <a class="secondary-button" href="{{ url_for('main.index') }}">返回首页</a>
+</section>
+{% endblock %}

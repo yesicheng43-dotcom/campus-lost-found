@@ -93,3 +93,12 @@ def test_owner_can_update_item_status(app):
 
     assert response.status_code == 200
     assert "已找到" in response.get_data(as_text=True)
+
+
+def test_missing_item_has_friendly_not_found_page(app):
+    client = app.test_client()
+
+    response = client.get("/items/9999")
+
+    assert response.status_code == 404
+    assert "找不到这条信息" in response.get_data(as_text=True)
