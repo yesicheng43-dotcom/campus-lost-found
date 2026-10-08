@@ -2,10 +2,9 @@
 {% block title %}登录 · 校园失物招领{% endblock %}
 {% block content %}
 <section class="auth-card">
-  <div class="auth-avatar"><img src="{{ url_for('static', filename='assets/avatar.png') }}" alt="校园失物招领"></div>
   <p class="eyebrow">欢迎回来</p>
   <h1>登录校园失物招领</h1>
-  <p class="muted">登录后可以发布信息并管理自己的发布。</p>
+  <p class="muted">请使用分配的账号登录，登录后可以发布并管理自己的信息。</p>
   <form class="form-card form-card--auth" method="post">
     <input type="hidden" name="next" value="{{ next }}">
     <label class="form-field" for="username">
@@ -18,7 +17,6 @@
     </label>
     <button class="primary-button" type="submit">登录</button>
   </form>
-  <p class="auth-tip">还没有账号？<a href="{{ url_for('main.register') }}">立即注册</a></p>
-  <p class="demo-tip">演示账号：demo-user　密码：123456</p>
+  <p class="auth-tip">账号由项目管理员统一分配。</p>
 </section>
 {% endblock %}

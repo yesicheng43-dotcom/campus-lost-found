@@ -147,6 +147,18 @@ def test_invalid_login_shows_error(app):
     assert "账号或密码不正确" in response.get_data(as_text=True)
 
 
+def test_login_page_does_not_expose_demo_credentials_or_register_link(app):
+    client = app.test_client()
+
+    response = client.get("/login")
+    body = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert "demo-user" not in body
+    assert "123456" not in body
+    assert "立即注册" not in body
+
+
 def test_register_creates_account_and_logs_in(app):
     client = app.test_client()
 
