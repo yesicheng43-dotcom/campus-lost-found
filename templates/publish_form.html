@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}发布{{ type_label }} · 校园失物招领{% endblock %}
+{% block content %}
+<section class="hero hero--compact">
+  <p class="eyebrow">发布{{ type_label }}</p>
+  <h1>填写{{ type_label }}信息</h1>
+  <p class="muted">带有 * 的项目必须填写。</p>
+</section>
+<form class="form-card" method="post" novalidate>
+  {% for field, label, input_type in [
+    ('name', '物品名称', 'text'),
+    ('category', '物品类别', 'text'),
+    ('location', '地点', 'text'),
+    ('event_time', '发生时间', 'date'),
+    ('contact', '联系方式', 'text')
+  ] %}
+    <label class="form-field" for="{{ field }}">
+      <span>{{ label }} *</span>
+      <input id="{{ field }}" name="{{ field }}" type="{{ input_type }}" value="{{ data[field] }}" required>
+      {% if errors.get(field) %}<small class="field-error">{{ errors[field] }}</small>{% endif %}
+    </label>
+  {% endfor %}
+  <label class="form-field" for="description">
+    <span>物品描述 *</span>
+    <textarea id="description" name="description" rows="4" required>{{ data.description }}</textarea>
+    {% if errors.get('description') %}<small class="field-error">{{ errors.description }}</small>{% endif %}
+  </label>
+  <button class="primary-button" type="submit">立即发布</button>
+</form>
+{% endblock %}

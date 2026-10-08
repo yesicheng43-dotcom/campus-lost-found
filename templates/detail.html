@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}信息详情 · 校园失物招领{% endblock %}
+{% block content %}
+<section class="hero hero--compact">
+  <p class="eyebrow">信息详情</p>
+  <h1>{{ item.name }}</h1>
+  <p class="muted">{{ '寻物' if item.type == 'lost' else '招领' }} · {{ item.status }}</p>
+</section>
+<article class="detail-card">
+  <dl class="detail-list">
+    <div><dt>物品类别</dt><dd>{{ item.category }}</dd></div>
+    <div><dt>地点</dt><dd>{{ item.location }}</dd></div>
+    <div><dt>时间</dt><dd>{{ item.event_time }}</dd></div>
+    <div><dt>物品描述</dt><dd>{{ item.description }}</dd></div>
+  </dl>
+  <div class="contact-row">
+    <span>联系方式：{{ item.contact }}</span>
+    <button class="secondary-button" type="button" data-copy-contact="{{ item.contact }}">复制</button>
+  </div>
+</article>
+{% endblock %}

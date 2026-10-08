@@ -4,6 +4,8 @@ from pathlib import Path
 import click
 from flask import current_app, g
 
+from .validation import STATUS_OPTIONS
+
 
 def get_db():
     if "db" not in g:
@@ -116,3 +118,49 @@ def search_items(keyword="", item_type="all", status="all"):
 
 def get_item(item_id):
     return get_db().execute("SELECT * FROM items WHERE id = ?", (item_id,)).fetchone()
+
+
+def create_item(item_type, data, owner):
+    status = STATUS_OPTIONS[item_type][0]
+    database = get_db()
+    cursor = database.execute(
+        """
+        INSERT INTO items
+          (type, name, category, location, event_time, description, image,
+           contact, status, owner)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            item_type,
+            data["name"],
+            data["category"],
+            data["location"],
+            data["event_time"],
+            data["description"],
+            data.get("image", ""),
+            data["contact"],
+            status,
+            owner,
+        ),
+    )
+    database.commit()
+    return cursor.lastrowid
+
+
+def list_owner_items(owner):
+    return get_db().execute(
+        "SELECT * FROM items WHERE owner = ? ORDER BY created_at DESC, id DESC",
+        (owner,),
+    ).fetchall()
+
+
+def update_item_status(item_id, status, owner):
+    item = get_item(item_id)
+    if item is None or item["owner"] != owner:
+        return False
+    if status not in STATUS_OPTIONS[item["type"]]:
+        return False
+    database = get_db()
+    database.execute("UPDATE items SET status = ? WHERE id = ?", (status, item_id))
+    database.commit()
+    return True

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}发布信息 · 校园失物招领{% endblock %}
+{% block content %}
+<section class="hero hero--compact">
+  <p class="eyebrow">发布信息</p>
+  <h1>请选择你要发布的类型</h1>
+  <p class="muted">填写物品信息，让校园里的失物更快找到主人。</p>
+</section>
+<section class="choice-list" aria-label="发布类型">
+  <a class="choice-card choice-card--lost" href="{{ url_for('main.publish_item', item_type='lost') }}">
+    <span class="choice-card__icon" aria-hidden="true">⌕</span>
+    <strong>发布寻物</strong>
+    <span>发布你丢失的物品</span>
+  </a>
+  <a class="choice-card choice-card--found" href="{{ url_for('main.publish_item', item_type='found') }}">
+    <span class="choice-card__icon" aria-hidden="true">⌕</span>
+    <strong>发布招领</strong>
+    <span>发布你捡到的物品</span>
+  </a>
+</section>
+{% endblock %}
