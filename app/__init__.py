@@ -21,6 +21,14 @@ def create_app(test_config=None):
 
     Path(app.instance_path).mkdir(parents=True, exist_ok=True)
 
+    app.config.setdefault(
+        "DATABASE", str(Path(app.instance_path) / "lost_found.sqlite3")
+    )
+
+    from . import db
+
+    db.init_app(app)
+
     from . import views
 
     app.register_blueprint(views.bp)
