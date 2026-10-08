@@ -1,0 +1,114 @@
+:root {
+  color-scheme: light;
+  --page-bg: #f4f7fb;
+  --card-bg: #ffffff;
+  --primary: #82b8ef;
+  --primary-deep: #2468a8;
+  --text: #182338;
+  --muted: #718096;
+  --border: #dce6f0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #edf2f7;
+  color: var(--text);
+  font-family: "Microsoft YaHei", "Noto Sans SC", sans-serif;
+}
+
+.phone-shell {
+  width: min(100%, 402px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 18px 16px 28px;
+  background: var(--page-bg);
+}
+
+.page-card {
+  position: relative;
+  min-height: calc(100vh - 46px);
+  overflow: hidden;
+  border-radius: 28px;
+  background: linear-gradient(160deg, #f8fbff 0%, #eef5fd 100%);
+  box-shadow: 0 12px 30px rgba(55, 84, 116, 0.08);
+}
+
+.decoration {
+  position: absolute;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #d6e8ff;
+}
+
+.decoration-left {
+  top: 18px;
+  left: -16px;
+}
+
+.decoration-right {
+  top: 18px;
+  right: -16px;
+}
+
+.hero {
+  position: relative;
+  padding: 50px 24px 28px;
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--primary-deep);
+  font-size: 13px;
+  letter-spacing: 0.16em;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 10px;
+  font-size: clamp(26px, 8vw, 34px);
+}
+
+.subtitle {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.empty-state {
+  margin: 90px 18px 24px;
+  padding: 34px 24px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--card-bg);
+  text-align: center;
+}
+
+.empty-state__icon {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 34px;
+}
+
+.empty-state h2 {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.empty-state p {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
