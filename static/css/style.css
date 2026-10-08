@@ -16,7 +16,7 @@
 body {
   margin: 0;
   min-width: 320px;
-  background: #edf2f7;
+  background: radial-gradient(circle at 50% 0%, #ffffff 0%, #edf3fa 58%, #e4edf7 100%);
   color: var(--text);
   font-family: "Microsoft YaHei", "Noto Sans SC", sans-serif;
 }
@@ -25,7 +25,7 @@ body {
   width: min(100%, 402px);
   min-height: 100vh;
   margin: 0 auto;
-  padding: 18px 16px 28px;
+  padding: 18px 16px 106px;
   background: var(--page-bg);
 }
 
@@ -370,19 +370,33 @@ h1 {
 }
 
 .bottom-nav {
-  position: sticky;
-  bottom: 0;
+  position: fixed;
+  left: 50%;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 20;
+  width: min(calc(100vw - 32px), 370px);
+  transform: translateX(-50%);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
-  padding: 12px 8px 0;
-  background: linear-gradient(180deg, rgba(244, 247, 251, 0), var(--page-bg) 35%);
+  padding: 10px;
+  border: 1px solid rgba(192, 211, 231, 0.85);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 12px 30px rgba(49, 81, 116, 0.18);
+  backdrop-filter: blur(12px);
 }
 
 .bottom-nav a {
   padding: 12px 6px;
   text-align: center;
   background: #cae2fa;
+}
+
+.bottom-nav a.is-active {
+  background: #9ed0ff;
+  color: #164a7b;
+  box-shadow: inset 0 0 0 1px rgba(36, 104, 168, 0.14);
 }
 
 .empty-state__icon {
@@ -401,4 +415,42 @@ h1 {
   color: var(--muted);
   font-size: 14px;
   line-height: 1.7;
+}
+
+@media (min-width: 760px) {
+  body {
+    padding: 28px 0 104px;
+  }
+
+  .phone-shell {
+    width: min(100% - 48px, 620px);
+    min-height: calc(100vh - 56px);
+    padding: 22px 28px 112px;
+    border: 1px solid rgba(207, 222, 237, 0.95);
+    border-radius: 34px;
+    box-shadow: 0 20px 60px rgba(45, 79, 116, 0.16);
+  }
+
+  .page-card {
+    min-height: calc(100vh - 166px);
+  }
+
+  .bottom-nav {
+    width: min(calc(100vw - 64px), 520px);
+    bottom: 24px;
+  }
+
+  .hero {
+    padding-top: 58px;
+  }
+
+  .item-list,
+  .choice-list,
+  .form-card,
+  .detail-card,
+  .flash-list {
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }

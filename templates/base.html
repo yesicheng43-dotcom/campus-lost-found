@@ -20,9 +20,9 @@
       {% endwith %}
       {% block content %}{% endblock %}
       <nav class="bottom-nav" aria-label="主导航">
-        <a href="{{ url_for('main.index') }}">首页</a>
-        <a href="{{ url_for('main.publish_type') }}">发布</a>
-        <a href="{{ url_for('main.my_posts') }}">我的</a>
+        <a class="{% if request.endpoint == 'main.index' %}is-active{% endif %}" href="{{ url_for('main.index') }}">首页</a>
+        <a class="{% if request.endpoint in ['main.publish_type', 'main.publish_item'] %}is-active{% endif %}" href="{{ url_for('main.publish_type') }}">发布</a>
+        <a class="{% if request.endpoint in ['main.my_posts', 'main.item_detail'] %}is-active{% endif %}" href="{{ url_for('main.my_posts') }}">我的</a>
       </nav>
     </main>
   </body>
