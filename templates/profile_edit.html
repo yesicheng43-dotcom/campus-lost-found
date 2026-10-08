@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}修改信息 · 校园失物招领{% endblock %}
+{% block content %}
+<section class="hero hero--compact">
+  <p class="eyebrow">个人资料</p>
+  <h1>修改信息</h1>
+  <p class="muted">修改你的联系方式，方便失主或拾主联系。</p>
+</section>
+<form class="form-card" method="post">
+  <label class="form-field" for="display_name"><span>姓名</span><input id="display_name" value="{{ user.display_name }}" disabled></label>
+  <label class="form-field" for="student_id"><span>学号</span><input id="student_id" value="{{ user.student_id or '管理员' }}" disabled></label>
+  <label class="form-field" for="faculty"><span>学院</span><input id="faculty" value="{{ user.faculty or '管理员账号' }}" disabled></label>
+  <label class="form-field" for="email"><span>邮箱</span><input id="email" name="email" type="email" value="{{ data.email }}" required></label>
+  <label class="form-field" for="phone"><span>联系电话</span><input id="phone" name="phone" type="tel" value="{{ data.phone }}" required></label>
+  <div class="form-actions">
+    <a class="secondary-button" href="{{ url_for('main.my_posts') }}">取消</a>
+    <button class="primary-button" type="submit">保存修改</button>
+  </div>
+</form>
+{% endblock %}

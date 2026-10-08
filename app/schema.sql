@@ -7,6 +7,10 @@ CREATE TABLE users (
   password_hash TEXT NOT NULL,
   display_name TEXT NOT NULL,
   student_id TEXT NOT NULL,
+  faculty TEXT NOT NULL,
+  email TEXT NOT NULL DEFAULT '',
+  phone TEXT NOT NULL DEFAULT '',
+  role TEXT NOT NULL CHECK (role IN ('user', 'admin')) DEFAULT 'user',
   avatar TEXT NOT NULL DEFAULT '',
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

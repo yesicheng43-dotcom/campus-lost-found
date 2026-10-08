@@ -188,7 +188,7 @@ h1 {
 
 .item-card {
   display: block;
-  padding: 18px;
+  padding: 14px;
   border: 1px solid transparent;
   border-radius: 18px;
   color: inherit;
@@ -207,11 +207,24 @@ h1 {
   text-decoration: none;
 }
 
+.item-card__content {
+  display: block;
+}
+
+.item-card__content.has-image {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: start;
+  gap: 14px;
+}
+
+.item-card__body { min-width: 0; }
+
 .item-card__image {
   display: block;
-  width: 100%;
-  height: 128px;
-  margin-bottom: 14px;
+  width: 96px;
+  height: 96px;
+  margin: 0;
   border-radius: 12px;
   object-fit: cover;
   background: #e7f0f8;
@@ -396,6 +409,58 @@ h1 {
 .auth-tip a { color: var(--primary-deep); font-weight: 700; }
 .demo-tip { font-size: 12px; }
 
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 18px 18px;
+  padding: 16px;
+  border-radius: 16px;
+  background: #b9dbfb;
+  box-shadow: 0 8px 18px rgba(55, 84, 116, 0.08);
+}
+
+.profile-card__avatar {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 auto;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+}
+
+.profile-card__identity { min-width: 0; flex: 1; }
+.profile-card__identity h2 { margin: 0 0 6px; font-size: 17px; }
+.profile-card__identity p { margin: 0 0 4px; color: #6c839c; font-size: 13px; }
+.profile-card__identity small { color: #6c839c; font-size: 11px; }
+.role-badge { padding: 5px 8px; border-radius: 999px; background: #fff; color: var(--primary-deep); font-size: 12px; font-weight: 700; }
+.profile-edit-link { flex: 0 0 auto; color: var(--primary-deep); font-size: 12px; font-weight: 700; text-decoration: none; }
+
+.profile-filter {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 0 18px 20px;
+}
+
+.profile-filter a {
+  padding: 9px 6px;
+  border-radius: 10px;
+  background: #c6e1fa;
+  color: #2468a8;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+
+.profile-filter a.is-active { background: #eaf7d5; color: #4a7e36; }
+
+.form-actions { display: flex; gap: 10px; align-items: center; }
+.form-actions .primary-button { flex: 1; }
+.form-actions .secondary-button { text-decoration: none; }
+
 .item-card--lost {
   background: #eaf7d5;
 }
@@ -412,8 +477,8 @@ h1 {
 }
 
 .item-card h2 {
-  margin-bottom: 8px;
-  font-size: 21px;
+  margin-bottom: 6px;
+  font-size: 18px;
 }
 
 .status {
@@ -438,13 +503,13 @@ h1 {
 
 .item-card__meta {
   color: #46566d;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .item-card__description {
   margin-top: 9px;
   color: #5c6b7d;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .bottom-nav {
@@ -526,7 +591,9 @@ h1 {
   .choice-list,
   .form-card,
   .detail-card,
-  .flash-list {
+  .flash-list,
+  .profile-card,
+  .profile-filter {
     max-width: 520px;
     margin-left: auto;
     margin-right: auto;

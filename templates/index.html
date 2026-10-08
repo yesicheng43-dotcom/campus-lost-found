@@ -28,13 +28,17 @@
   <section class="item-list" aria-label="失物招领信息">
     {% for item in items %}
       <a class="item-card item-card--{{ item['type'] }}" href="{{ url_for('main.item_detail', item_id=item['id']) }}">
-        {% if item['image'] %}<img class="item-card__image" src="{{ item['image'] }}" alt="{{ item['name'] }}图片">{% endif %}
-        <div class="item-card__topline">
-          <h2>{{ item['name'] }}</h2>
-          <span class="status status--{{ item['type'] }}">{{ item['status'] }}</span>
+        <div class="item-card__content {% if item['image'] %}has-image{% endif %}">
+          {% if item['image'] %}<img class="item-card__image" src="{{ item['image'] }}" alt="{{ item['name'] }}图片">{% endif %}
+          <div class="item-card__body">
+            <div class="item-card__topline">
+              <h2>{{ item['name'] }}</h2>
+              <span class="status status--{{ item['type'] }}">{{ item['status'] }}</span>
+            </div>
+            <p class="item-card__meta">{{ "寻物" if item['type'] == "lost" else "招领" }} · {{ item['location'] }} · {{ item['event_time'] }}</p>
+            <p class="item-card__description">{{ item['description'] }}</p>
+          </div>
         </div>
-        <p class="item-card__meta">{{ "寻物" if item['type'] == "lost" else "招领" }} · {{ item['location'] }} · {{ item['event_time'] }}</p>
-        <p class="item-card__description">{{ item['description'] }}</p>
       </a>
     {% else %}
       <div class="empty-state empty-state--compact">

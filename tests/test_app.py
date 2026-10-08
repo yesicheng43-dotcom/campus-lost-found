@@ -5,7 +5,7 @@ import pytest
 def login(client):
     return client.post(
         "/login",
-        data={"username": "demo-user", "password": "123456"},
+        data={"username": "102402141", "password": "123456"},
         follow_redirects=True,
     )
 
@@ -124,7 +124,7 @@ def test_protected_pages_require_login(app):
     assert "/login" in response.headers["Location"]
 
 
-def test_demo_user_can_login_and_view_personal_page(app):
+def test_student_can_login_and_view_personal_page(app):
     client = app.test_client()
 
     login(client)
@@ -132,7 +132,7 @@ def test_demo_user_can_login_and_view_personal_page(app):
 
     assert response.status_code == 200
     assert "叶思铖" in response.get_data(as_text=True)
-    assert "102402142" in response.get_data(as_text=True)
+    assert "102402141" in response.get_data(as_text=True)
 
 
 def test_invalid_login_shows_error(app):
@@ -140,7 +140,7 @@ def test_invalid_login_shows_error(app):
 
     response = client.post(
         "/login",
-        data={"username": "demo-user", "password": "wrong-password"},
+        data={"username": "102402141", "password": "wrong-password"},
     )
 
     assert response.status_code == 200
@@ -157,6 +157,49 @@ def test_login_page_does_not_expose_demo_credentials_or_register_link(app):
     assert "demo-user" not in body
     assert "123456" not in body
     assert "立即注册" not in body
+
+
+def test_user_can_update_own_contact_information(app):
+    client = app.test_client()
+    login(client)
+
+    response = client.post(
+        "/profile/edit",
+        data={"email": "new141@example.com", "phone": "13900000001"},
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    body = response.get_data(as_text=True)
+    assert "new141@example.com" in body
+    assert "13900000001" in body
+
+
+def test_normal_user_cannot_update_another_users_item(app):
+    client = app.test_client()
+    login(client)
+
+    response = client.post("/items/4/status", data={"status": "已找到"})
+
+    assert response.status_code == 400
+
+
+def test_admin_can_update_any_users_item(app):
+    client = app.test_client()
+    client.post(
+        "/login",
+        data={"username": "admin", "password": "123456"},
+    )
+
+    response = client.post(
+        "/items/4/status",
+        data={"status": "已找到"},
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert "白色耳机" in response.get_data(as_text=True)
+    assert "已找到" in response.get_data(as_text=True)
 
 
 def test_register_creates_account_and_logs_in(app):

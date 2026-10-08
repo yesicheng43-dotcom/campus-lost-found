@@ -29,15 +29,56 @@ def init_db():
     database.executescript(schema_path.read_text(encoding="utf-8"))
     database.execute(
         """
-        INSERT INTO users (username, password_hash, display_name, student_id, avatar)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO users
+          (username, password_hash, display_name, student_id, faculty, email, phone, role, avatar)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
-            "demo-user",
+            "102402141",
             generate_password_hash("123456"),
             "叶思铖",
-            "102402142",
+            "102402141",
+            "计算机与大数据学院",
+            "102402141@example.com",
+            "13800000001",
+            "user",
             "/static/assets/avatar.png",
+        ),
+    )
+    database.execute(
+        """
+        INSERT INTO users
+          (username, password_hash, display_name, student_id, faculty, email, phone, role, avatar)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            "102402142",
+            generate_password_hash("123456"),
+            "叶腾骏",
+            "102402142",
+            "计算机与大数据学院",
+            "102402142@example.com",
+            "13800000002",
+            "user",
+            "/static/assets/avatar-102402142.png",
+        ),
+    )
+    database.execute(
+        """
+        INSERT INTO users
+          (username, password_hash, display_name, student_id, faculty, email, phone, role, avatar)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            "admin",
+            generate_password_hash("123456"),
+            "系统管理员",
+            "",
+            "",
+            "",
+            "",
+            "admin",
+            "",
         ),
     )
     database.executemany(
@@ -56,9 +97,9 @@ def init_db():
                 "2026-09-22",
                 "蓝色校园卡，卡套上有白色挂绳。",
                 "/static/assets/item-campus-card.png",
-                "campus-card@example.com",
+                "102402141@example.com",
                 "寻找中",
-                "demo-user",
+                "102402141",
             ),
             (
                 "found",
@@ -68,9 +109,9 @@ def init_db():
                 "2026-09-21",
                 "在教室后排捡到一把黑色长柄雨伞。",
                 "/static/assets/item-umbrella.png",
-                "umbrella@example.com",
+                "102402141@example.com",
                 "待认领",
-                "demo-user",
+                "102402141",
             ),
             (
                 "lost",
@@ -80,9 +121,33 @@ def init_db():
                 "2026-09-20",
                 "橙色篮球，表面有一处明显的黑色记号。",
                 "/static/assets/item-basketball.png",
-                "basketball@example.com",
+                "102402141@example.com",
                 "寻找中",
-                "demo-user",
+                "102402141",
+            ),
+            (
+                "lost",
+                "白色耳机",
+                "电子产品",
+                "西区教学楼 306",
+                "2026-09-22",
+                "白色无线耳机，收纳盒上有蓝色贴纸。",
+                "/static/assets/item-earbuds.png",
+                "102402142@example.com",
+                "寻找中",
+                "102402142",
+            ),
+            (
+                "found",
+                "水杯",
+                "生活用品",
+                "图书馆一楼",
+                "2026-09-23",
+                "透明水杯，杯身有蓝色挂绳。",
+                "/static/assets/item-bottle.png",
+                "102402142@example.com",
+                "待认领",
+                "102402142",
             ),
         ],
     )
@@ -102,7 +167,14 @@ def init_app(app):
 
     with app.app_context():
         database = Path(app.config["DATABASE"])
-        if not database.exists() or not _has_table("users"):
+        if (
+            not database.exists()
+            or not _has_table("users")
+            or not _has_column("users", "role")
+            or not _has_column("users", "faculty")
+            or not _has_column("users", "email")
+            or not _has_column("users", "phone")
+        ):
             init_db()
 
 
@@ -116,6 +188,11 @@ def _has_table(table_name):
         .fetchone()
         is not None
     )
+
+
+def _has_column(table_name, column_name):
+    columns = get_db().execute(f"PRAGMA table_info({table_name})").fetchall()
+    return any(column[1] == column_name for column in columns)
 
 
 def search_items(keyword="", item_type="all", status="all"):
@@ -180,9 +257,15 @@ def list_owner_items(owner):
     ).fetchall()
 
 
-def update_item_status(item_id, status, owner):
+def list_all_items():
+    return get_db().execute(
+        "SELECT * FROM items ORDER BY created_at DESC, id DESC"
+    ).fetchall()
+
+
+def update_item_status(item_id, status, owner, can_manage_all=False):
     item = get_item(item_id)
-    if item is None or item["owner"] != owner:
+    if item is None or (not can_manage_all and item["owner"] != owner):
         return False
     if status not in STATUS_OPTIONS[item["type"]]:
         return False
@@ -205,19 +288,32 @@ def authenticate_user(username, password):
     return user
 
 
-def create_user(username, password, display_name, student_id):
+def create_user(
+    username,
+    password,
+    display_name,
+    student_id,
+    faculty="计算机与大数据学院",
+    email="",
+    phone="",
+):
     database = get_db()
     try:
         cursor = database.execute(
             """
-            INSERT INTO users (username, password_hash, display_name, student_id, avatar)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO users
+              (username, password_hash, display_name, student_id, faculty, email, phone, role, avatar)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 username,
                 generate_password_hash(password),
                 display_name,
                 student_id,
+                faculty,
+                email,
+                phone,
+                "user",
                 "/static/assets/avatar.png",
             ),
         )
@@ -225,3 +321,12 @@ def create_user(username, password, display_name, student_id):
     except sqlite3.IntegrityError:
         return None
     return cursor.lastrowid
+
+
+def update_user_contact(username, email, phone):
+    database = get_db()
+    database.execute(
+        "UPDATE users SET email = ?, phone = ? WHERE username = ?",
+        (email, phone, username),
+    )
+    database.commit()

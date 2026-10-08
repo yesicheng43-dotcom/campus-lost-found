@@ -18,9 +18,11 @@ from .db import (
     create_user,
     get_item,
     get_user,
+    list_all_items,
     list_owner_items,
     search_items,
     update_item_status,
+    update_user_contact,
 )
 from .validation import STATUS_OPTIONS, TYPE_LABELS, validate_item_form
 
@@ -41,6 +43,16 @@ def login_required(view):
 
 def current_username():
     return session.get("username")
+
+
+def current_user():
+    username = current_username()
+    return get_user(username) if username else None
+
+
+def current_user_is_admin():
+    user = current_user()
+    return user is not None and user["role"] == "admin"
 
 
 @bp.get("/")
@@ -133,8 +145,41 @@ def publish_type():
 @bp.get("/mine")
 @login_required
 def my_posts():
-    user = get_user(current_username())
-    return render_template("my_posts.html", items=list_owner_items(current_username()), user=user)
+    user = current_user()
+    all_items = list_all_items() if current_user_is_admin() else list_owner_items(current_username())
+    item_type = request.args.get("type", "all")
+    items = [item for item in all_items if item_type == "all" or item["type"] == item_type]
+    return render_template(
+        "my_posts.html",
+        items=items,
+        user=user,
+        is_admin=current_user_is_admin(),
+        selected_type=item_type,
+    )
+
+
+@bp.route("/profile/edit", methods=["GET", "POST"])
+@login_required
+def edit_profile():
+    user = current_user()
+    data = {"email": user["email"], "phone": user["phone"]}
+    errors = []
+    if request.method == "POST":
+        data = {
+            "email": request.form.get("email", "").strip(),
+            "phone": request.form.get("phone", "").strip(),
+        }
+        if not data["email"] or "@" not in data["email"]:
+            errors.append("请输入有效的邮箱地址。")
+        if not data["phone"] or len(data["phone"]) < 6:
+            errors.append("请输入有效的联系电话。")
+        if not errors:
+            update_user_contact(current_username(), data["email"], data["phone"])
+            flash("联系方式已更新。", "success")
+            return redirect(url_for("main.my_posts"))
+        for error in errors:
+            flash(error, "error")
+    return render_template("profile_edit.html", user=user, data=data)
 
 
 @bp.get("/items/<int:item_id>")
@@ -150,7 +195,12 @@ def item_detail(item_id):
 def publish_item(item_type):
     if item_type not in TYPE_LABELS:
         abort(404)
-    data = {field: "" for field in ("name", "category", "location", "event_time", "description", "contact")}
+    user = current_user()
+    data = {
+        field: ""
+        for field in ("name", "category", "location", "event_time", "description")
+    }
+    data["contact"] = user["email"] or user["phone"]
     errors = {}
     if request.method == "POST":
         data, errors = validate_item_form(request.form, item_type)
@@ -172,7 +222,12 @@ def publish_item(item_type):
 @login_required
 def change_item_status(item_id):
     status = request.form.get("status", "")
-    if not update_item_status(item_id, status, current_username()):
+    if not update_item_status(
+        item_id,
+        status,
+        current_username(),
+        can_manage_all=current_user_is_admin(),
+    ):
         abort(400)
     flash("信息状态已更新。", "success")
     return redirect(url_for("main.my_posts"))
