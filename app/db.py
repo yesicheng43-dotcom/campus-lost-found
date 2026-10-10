@@ -195,7 +195,7 @@ def _has_column(table_name, column_name):
     return any(column[1] == column_name for column in columns)
 
 
-def search_items(keyword="", item_type="all", status="all"):
+def search_items(keyword="", item_type="all", status="all", category="all"):
     database = get_db()
     clauses = []
     parameters = []
@@ -211,6 +211,9 @@ def search_items(keyword="", item_type="all", status="all"):
     if status and status != "all":
         clauses.append("status = ?")
         parameters.append(status)
+    if category and category != "all":
+        clauses.append("category = ?")
+        parameters.append(category)
 
     where = f"WHERE {' AND '.join(clauses)}" if clauses else ""
     return database.execute(
@@ -255,6 +258,14 @@ def list_owner_items(owner):
         "SELECT * FROM items WHERE owner = ? ORDER BY created_at DESC, id DESC",
         (owner,),
     ).fetchall()
+
+
+def list_categories():
+    """列出当前已出现的物品类别，供首页筛选按钮使用。"""
+    rows = get_db().execute(
+        "SELECT DISTINCT category FROM items WHERE category <> '' ORDER BY category"
+    ).fetchall()
+    return [row["category"] for row in rows]
 
 
 def list_all_items():
