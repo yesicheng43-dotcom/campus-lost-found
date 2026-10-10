@@ -21,7 +21,16 @@
   <div class="filter-row" role="group" aria-label="信息类型筛选">
     {% for value, label in [("all", "全部"), ("lost", "寻物"), ("found", "招领")] %}
       <a class="filter-chip {% if selected_type == value %}is-active{% endif %}"
-         href="{{ url_for('main.index', keyword=keyword, type=value, status=selected_status) }}">{{ label }}</a>
+         href="{{ url_for('main.index', keyword=keyword, type=value, status=selected_status, category=selected_category) }}">{{ label }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="filter-row" role="group" aria-label="物品类别筛选">
+    <a class="filter-chip {% if selected_category == 'all' %}is-active{% endif %}"
+       href="{{ url_for('main.index', keyword=keyword, type=selected_type, status=selected_status, category='all') }}">全部类别</a>
+    {% for c in categories %}
+      <a class="filter-chip {% if selected_category == c %}is-active{% endif %}"
+         href="{{ url_for('main.index', keyword=keyword, type=selected_type, status=selected_status, category=c) }}">{{ c }}</a>
     {% endfor %}
   </div>
 

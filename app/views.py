@@ -19,6 +19,7 @@ from .db import (
     get_item,
     get_user,
     list_all_items,
+    list_categories,
     list_owner_items,
     search_items,
     update_item_status,
@@ -60,13 +61,16 @@ def index():
     keyword = request.args.get("keyword", "")
     item_type = request.args.get("type", "all")
     status = request.args.get("status", "all")
-    items = search_items(keyword, item_type, status)
+    category = request.args.get("category", "all")
+    items = search_items(keyword, item_type, status, category)
     return render_template(
         "index.html",
         items=items,
         keyword=keyword,
         selected_type=item_type,
         selected_status=status,
+        selected_category=category,
+        categories=list_categories(),
     )
 
 
