@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}登录 · 校园失物招领{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <p class="eyebrow">欢迎回来</p>
+  <h1>登录校园失物招领</h1>
+  <p class="muted">请使用分配的账号登录，登录后可以发布并管理自己的信息。</p>
+  <form class="form-card form-card--auth" method="post">
+    <input type="hidden" name="next" value="{{ next }}">
+    <label class="form-field" for="username">
+      <span>账号</span>
+      <input id="username" name="username" autocomplete="username" placeholder="请输入账号" required>
+    </label>
+    <label class="form-field" for="password">
+      <span>密码</span>
+      <input id="password" name="password" type="password" autocomplete="current-password" placeholder="请输入密码" required>
+    </label>
+    <button class="primary-button" type="submit">登录</button>
+  </form>
+  <p class="auth-tip">账号由项目管理员统一分配。</p>
+</section>
+{% endblock %}
