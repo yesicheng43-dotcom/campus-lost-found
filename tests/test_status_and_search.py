@@ -181,3 +181,38 @@ def test_publish_form_requires_login(app):
 
     assert response.status_code == 302
     assert "/login" in response.headers["Location"]
+
+
+# ---------- 6. 按物品类别筛选 ----------
+
+def test_home_page_shows_category_filters(app):
+    """首页要展示类别筛选入口，含「全部类别」和具体类别。"""
+    client = app.test_client()
+
+    body = client.get("/").get_data(as_text=True)
+
+    assert "全部类别" in body
+    assert "电子产品" in body
+
+
+def test_filter_by_category(app):
+    """按类别筛选：「证件」下只有校园卡，不应出现其他类别的物品。"""
+    client = app.test_client()
+
+    body = client.get("/?category=证件").get_data(as_text=True)
+
+    assert "校园卡" in body
+    assert "白色耳机" not in body
+
+
+def test_filter_by_category_combined_with_type(app):
+    """类别与类型筛选可以叠加使用。"""
+    client = app.test_client()
+
+    found = client.get("/?category=生活用品&type=found").get_data(as_text=True)
+    assert "水杯" in found
+    assert "黑色雨伞" in found
+
+    lost = client.get("/?category=生活用品&type=lost").get_data(as_text=True)
+    assert "水杯" not in lost
+    assert "黑色雨伞" not in lost
